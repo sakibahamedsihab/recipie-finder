@@ -6,14 +6,24 @@ import MealCard from "./components/MealCard.jsx";
 function App() {
   const [query, setQuery] = useState("");
   const [meal, setMeal] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   async function handleSearch(event) {
     event.preventDefault();
+    setError(false);
+    setLoading(true);
     const url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`;
     const res = await fetch(url);
     const data = await res.json();
-    setMeal(data.meals || []);
-    console.log(meal);
+    if (!data.meals) {
+      setMeal([]);
+      setError(true);
+    } else {
+      setMeal(data.meals);
+      setError(false);
+    }
+    setLoading(false);
   }
 
   return (
@@ -25,9 +35,18 @@ function App() {
         // query={query}
       />
       <div className="flex flex-wrap gap-5 justify-center p-5">
-        {meal.map((singleMeal) => (
-          <MealCard key={singleMeal.idMeal} {...singleMeal} />
-        ))}
+        {loading && (
+          <p className="text-4xl font-bold text-blue-400">Loading...</p>
+        )}
+        {error && (
+          <p className="text-4xl font-bold text-blue-400">
+            Error! No Recipie Found...
+          </p>
+        )}
+        {!loading &&
+          meal.map((singleMeal) => (
+            <MealCard key={singleMeal.idMeal} {...singleMeal} />
+          ))}
       </div>
     </div>
   );
