@@ -2,6 +2,7 @@ import { useState } from "react";
 import Header from "./components/Header.jsx";
 import SearchBar from "./components/SearchBar.jsx";
 import MealCard from "./components/MealCard.jsx";
+import {Routes, Route} from 'react-router-dom'
 
 function App() {
   const [query, setQuery] = useState("");
@@ -27,28 +28,35 @@ function App() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen p-5">
-      <Header />
-      <SearchBar
-        setQuery={setQuery}
-        onSearch={handleSearch}
-        // query={query}
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <div className="bg-gray-50 min-h-screen p-5">
+            <Header />
+            <SearchBar
+              setQuery={setQuery}
+              onSearch={handleSearch}
+              // query={query}
+            />
+            <div className="flex flex-wrap gap-5 justify-center p-5">
+              {loading && (
+                <p className="text-4xl font-bold text-blue-400">Loading...</p>
+              )}
+              {error && (
+                <p className="text-4xl font-bold text-blue-400">
+                  Error! No Recipie Found...
+                </p>
+              )}
+              {!loading &&
+                meal.map((singleMeal) => (
+                  <MealCard key={singleMeal.idMeal} {...singleMeal} />
+                ))}
+            </div>
+          </div>
+        }
       />
-      <div className="flex flex-wrap gap-5 justify-center p-5">
-        {loading && (
-          <p className="text-4xl font-bold text-blue-400">Loading...</p>
-        )}
-        {error && (
-          <p className="text-4xl font-bold text-blue-400">
-            Error! No Recipie Found...
-          </p>
-        )}
-        {!loading &&
-          meal.map((singleMeal) => (
-            <MealCard key={singleMeal.idMeal} {...singleMeal} />
-          ))}
-      </div>
-    </div>
+    </Routes>
   );
 }
 
